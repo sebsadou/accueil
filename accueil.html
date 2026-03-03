@@ -1,0 +1,621 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Accueil — Raccourcis</title>
+  <style>
+    :root{
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --text: #111827;
+      --muted: #6b7280;
+      --border: rgba(17,24,39,.10);
+      --shadow: 0 10px 30px rgba(17,24,39,.10);
+      --radius: 16px;
+      --glass: rgba(255,255,255,.70);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background:
+        radial-gradient(1200px 600px at 15% 0%, #eaf1ff 0%, transparent 60%),
+        radial-gradient(900px 500px at 85% 10%, #ffeef5 0%, transparent 55%),
+        var(--bg);
+      color: var(--text);
+    }
+    header{
+      max-width: 1100px;
+      margin: 26px auto 10px;
+      padding: 0 16px;
+      display:flex;
+      gap: 12px;
+      align-items:center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+    .title{display:flex;flex-direction:column;gap:4px}
+    h1{margin:0;font-size:22px;letter-spacing:.2px}
+    .subtitle{margin:0;color:var(--muted);font-size:13px}
+    .controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .btn{
+      appearance:none;
+      border:1px solid var(--border);
+      background: var(--glass);
+      box-shadow: var(--shadow);
+      padding: 9px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      cursor:pointer;
+      transition: transform .08s ease, box-shadow .15s ease;
+      user-select:none;
+    }
+    .btn:hover{transform: translateY(-1px); box-shadow: 0 14px 26px rgba(17,24,39,.12);}
+    .btn:active{transform: translateY(0px);}
+    .btn.primary{
+      background: #111827;
+      color: white;
+      border-color: rgba(255,255,255,.18);
+    }
+    .btn.danger{
+      background: rgba(220,38,38,.10);
+      border-color: rgba(220,38,38,.25);
+    }
+
+    .search{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding: 10px 12px;
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      box-shadow: var(--shadow);
+      min-width: 260px;
+      flex: 1;
+      max-width: 520px;
+      backdrop-filter: blur(10px);
+    }
+    .search input{
+      width: 100%;
+      border: 0;
+      outline: none;
+      background: transparent;
+      font-size: 14px;
+      color: var(--text);
+    }
+
+    .wrap{
+      max-width: 1100px;
+      margin: 18px auto 40px;
+      padding: 0 16px;
+      display:grid;
+      gap: 18px;
+    }
+    .section{
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 16px;
+      backdrop-filter: blur(10px);
+    }
+    .section-head{
+      display:flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+    .section h2{margin:0;font-size:16px}
+    .section .count{color: var(--muted);font-size: 12px}
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 12px;
+    }
+    @media (max-width: 980px){ .grid{ grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+    @media (max-width: 640px){ .grid{ grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+    .tile{
+      display:flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 6px;
+      padding: 12px;
+      border-radius: 14px;
+      text-decoration:none;
+      color: var(--text);
+      border: 1px solid var(--border);
+      background: var(--card);
+      transition: transform .08s ease, box-shadow .15s ease;
+      min-height: 92px;
+      position: relative;
+      overflow: hidden;
+    }
+    .tile:hover{transform: translateY(-2px); box-shadow: 0 14px 26px rgba(17,24,39,.12);}
+    .row{display:flex; align-items:center; gap:10px;}
+    .favicon{
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      border: 1px solid rgba(17,24,39,.10);
+      background: rgba(17,24,39,.04);
+      display:grid;
+      place-items:center;
+      overflow:hidden;
+      flex: 0 0 auto;
+    }
+    .favicon img{width: 18px; height: 18px; display:block;}
+    .fallback{
+      font-size: 16px;
+      line-height: 1;
+    }
+    .name{font-weight: 650; font-size: 13px; line-height: 1.1;}
+    .url{font-size: 11px; color: var(--muted); overflow:hidden; text-overflow: ellipsis; white-space: nowrap;}
+
+    .footer{
+      max-width:1100px;
+      margin: 0 auto 30px;
+      padding: 0 16px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    /* Modal editor */
+    .modal-backdrop{
+      position: fixed;
+      inset: 0;
+      background: rgba(17,24,39,.45);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding: 16px;
+      z-index: 50;
+    }
+    .modal{
+      width: min(1100px, 100%);
+      max-height: min(85vh, 900px);
+      overflow:auto;
+      background: white;
+      border-radius: 18px;
+      border: 1px solid rgba(17,24,39,.12);
+      box-shadow: 0 30px 80px rgba(0,0,0,.25);
+    }
+    .modal-head{
+      position: sticky;
+      top: 0;
+      background: white;
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(17,24,39,.10);
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      gap: 10px;
+      z-index: 2;
+    }
+    .modal-head h3{margin:0;font-size:15px}
+    .modal-body{padding: 14px 16px 18px;}
+    .edit-grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    @media (max-width: 900px){ .edit-grid{ grid-template-columns: 1fr; } }
+    .panel{
+      border: 1px solid rgba(17,24,39,.10);
+      border-radius: 14px;
+      padding: 12px;
+      background: rgba(17,24,39,.02);
+    }
+    .panel h4{margin:0 0 10px;font-size:14px}
+    .rows{display:grid; gap:10px;}
+    .edit-row{
+      display:grid;
+      grid-template-columns: 1.1fr 1.6fr .6fr;
+      gap: 10px;
+      align-items: center;
+    }
+    @media (max-width: 640px){
+      .edit-row{ grid-template-columns: 1fr; }
+    }
+    label{
+      font-size: 12px;
+      color: var(--muted);
+      display:block;
+      margin-bottom: 4px;
+    }
+    input[type="text"], input[type="url"]{
+      width:100%;
+      padding: 10px 10px;
+      border-radius: 12px;
+      border: 1px solid rgba(17,24,39,.12);
+      outline:none;
+      font-size: 13px;
+    }
+    input[type="text"]:focus, input[type="url"]:focus{
+      border-color: rgba(37,99,235,.45);
+      box-shadow: 0 0 0 3px rgba(37,99,235,.12);
+    }
+    .mini{
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 10px;
+      line-height: 1.35;
+    }
+    .select{
+      display:flex; gap:8px; align-items:center; flex-wrap:wrap;
+      font-size: 12px; color: var(--muted);
+    }
+    .select input{
+      width: 64px;
+      padding: 8px 10px;
+      border-radius: 12px;
+      border: 1px solid rgba(17,24,39,.12);
+      outline:none;
+    }
+    .kbd{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      background: rgba(17,24,39,.06);
+      border: 1px solid rgba(17,24,39,.10);
+      padding: 1px 6px;
+      border-radius: 8px;
+      color: #111827;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- =======================
+       CONFIG PAR DÉFAUT
+       (sera écrasée si tu as déjà sauvegardé dans le navigateur)
+  ======================== -->
+  <script>
+    const DEFAULTS = {
+      openLimitPro: 6,
+      openLimitPerso: 6,
+      shortcutsPro: [
+        { name: "Gmail",      url: "https://mail.google.com/",              icon: "📧" },
+        { name: "Agenda",     url: "https://calendar.google.com/",          icon: "📅" },
+        { name: "Drive",      url: "https://drive.google.com/",             icon: "🗂️" },
+        { name: "Meet",       url: "https://meet.google.com/",              icon: "🎥" },
+        { name: "Docs",       url: "https://docs.google.com/",              icon: "📄" },
+        { name: "Sheets",     url: "https://sheets.google.com/",            icon: "📊" },
+        { name: "Slides",     url: "https://slides.google.com/",            icon: "🖼️" },
+        { name: "Jira",       url: "https://www.atlassian.com/software/jira",icon: "🧩" },
+        { name: "Confluence", url: "https://www.atlassian.com/software/confluence", icon:"📚" },
+        { name: "Teams",      url: "https://teams.microsoft.com/",          icon: "💬" },
+        { name: "Notion",     url: "https://www.notion.so/",                icon: "📝" },
+        { name: "GitHub",     url: "https://github.com/",                   icon: "🐙" },
+      ],
+      shortcutsPerso: [
+        { name: "WhatsApp Web", url: "https://web.whatsapp.com/",           icon: "💚" },
+        { name: "YouTube",      url: "https://www.youtube.com/",            icon: "▶️" },
+        { name: "Disney+",      url: "https://www.disneyplus.com/",         icon: "✨" },
+        { name: "Netflix",      url: "https://www.netflix.com/",            icon: "🎬" },
+        { name: "Amazon",       url: "https://www.amazon.fr/",              icon: "🛒" },
+        { name: "LeBonCoin",    url: "https://www.leboncoin.fr/",           icon: "🏷️" },
+        { name: "Banque",       url: "https://example.com",                 icon: "🏦" },
+        { name: "Impots",       url: "https://www.impots.gouv.fr/",         icon: "🧾" },
+        { name: "Doctolib",     url: "https://www.doctolib.fr/",            icon: "🩺" },
+        { name: "Météo",        url: "https://meteofrance.com/",            icon: "⛅" },
+        { name: "Maps",         url: "https://www.google.com/maps",         icon: "🗺️" },
+        { name: "Spotify",      url: "https://open.spotify.com/",           icon: "🎧" },
+      ],
+    };
+
+    const STORAGE_KEY = "home_shortcuts_v2";
+
+    function loadState(){
+      try{
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if(!raw) return structuredClone(DEFAULTS);
+        const parsed = JSON.parse(raw);
+
+        // Merge safe (pour éviter les crash si tu as un vieux stockage)
+        const s = structuredClone(DEFAULTS);
+        if(Array.isArray(parsed.shortcutsPro)) s.shortcutsPro = parsed.shortcutsPro.slice(0,12);
+        if(Array.isArray(parsed.shortcutsPerso)) s.shortcutsPerso = parsed.shortcutsPerso.slice(0,12);
+        if(Number.isFinite(parsed.openLimitPro)) s.openLimitPro = parsed.openLimitPro;
+        if(Number.isFinite(parsed.openLimitPerso)) s.openLimitPerso = parsed.openLimitPerso;
+        // Ensure 12 slots
+        while(s.shortcutsPro.length < 12) s.shortcutsPro.push({name:"", url:"", icon:"🔗"});
+        while(s.shortcutsPerso.length < 12) s.shortcutsPerso.push({name:"", url:"", icon:"🔗"});
+        return s;
+      }catch(e){
+        return structuredClone(DEFAULTS);
+      }
+    }
+
+    function saveState(state){
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function resetState(){
+      localStorage.removeItem(STORAGE_KEY);
+      location.reload();
+    }
+
+    function hostFromUrl(url){
+      try { return new URL(url).hostname.replace("www.",""); }
+      catch(e){ return url || ""; }
+    }
+
+    function faviconUrl(url){
+      // Utilise le favicon du site ; marche sur beaucoup de domaines.
+      // Si certains sites bloquent, l’emoji fallback prend le relais.
+      try{
+        const u = new URL(url);
+        return u.origin + "/favicon.ico";
+      }catch(e){
+        return "";
+      }
+    }
+  </script>
+
+  <header>
+    <div class="title">
+      <h1>Ma page d’accueil</h1>
+      <p class="subtitle">Raccourcis Pro & Perso — édition intégrée • icônes automatiques</p>
+    </div>
+
+    <form class="search" action="https://www.google.com/search" method="GET">
+      <span aria-hidden="true">🔎</span>
+      <input name="q" type="text" placeholder="Rechercher sur Google…" autocomplete="off" />
+    </form>
+
+    <div class="controls">
+      <button class="btn" id="btnEdit" type="button">✏️ Éditer</button>
+      <button class="btn" id="btnOpenPro" type="button">🚀 Ouvrir Pro</button>
+      <button class="btn" id="btnOpenPerso" type="button">🏠 Ouvrir Perso</button>
+      <button class="btn danger" id="btnReset" type="button">↩️ Réinitialiser</button>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="section" id="pro">
+      <div class="section-head">
+        <h2>💼 Pro</h2>
+        <div class="count" id="countPro"></div>
+      </div>
+      <div class="grid" id="gridPro"></div>
+      <div class="mini">
+        Astuce : <span class="kbd">Ctrl</span> + <span class="kbd">L</span> pour aller direct à la barre d’adresse, ou utilise le champ de recherche.
+      </div>
+    </section>
+
+    <section class="section" id="perso">
+      <div class="section-head">
+        <h2>🏠 Perso</h2>
+        <div class="count" id="countPerso"></div>
+      </div>
+      <div class="grid" id="gridPerso"></div>
+    </section>
+  </main>
+
+  <div class="footer">
+    Tout est stocké <b>localement</b> dans ton navigateur (pas d’envoi ailleurs).
+    Si tu changes de PC / profil Chrome, il faudra recopier tes liens.
+  </div>
+
+  <!-- Modal -->
+  <div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-modal="true" aria-label="Éditeur de raccourcis">
+    <div class="modal">
+      <div class="modal-head">
+        <h3>Éditer mes raccourcis</h3>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <button class="btn primary" id="btnSave" type="button">💾 Sauver</button>
+          <button class="btn" id="btnClose" type="button">Fermer</button>
+        </div>
+      </div>
+      <div class="modal-body">
+        <div class="select">
+          <span>Ouvrir en 1 clic :</span>
+          <span>Pro</span><input id="openLimitPro" type="number" min="1" max="12" />
+          <span>Perso</span><input id="openLimitPerso" type="number" min="1" max="12" />
+          <span class="mini">Conseil : mets 4 à 6 pour éviter trop d’onglets.</span>
+        </div>
+
+        <div class="edit-grid" style="margin-top:12px;">
+          <div class="panel">
+            <h4>💼 Pro (12)</h4>
+            <div class="rows" id="editPro"></div>
+          </div>
+          <div class="panel">
+            <h4>🏠 Perso (12)</h4>
+            <div class="rows" id="editPerso"></div>
+          </div>
+        </div>
+
+        <div class="mini" style="margin-top:12px;">
+          Champs :
+          <span class="kbd">Nom</span> (ex: “Jira”),
+          <span class="kbd">URL</span> (ex: https://…),
+          <span class="kbd">Emoji</span> (ex: 🧩).
+          <br/>Les icônes de site (favicon) s’affichent automatiquement quand dispo.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ===== State
+    let state = loadState();
+
+    // ===== Render tiles
+    function tileHtml(item){
+      const safeName = (item.name || "Lien").trim() || "Lien";
+      const safeUrl  = (item.url || "").trim();
+      const safeIcon = (item.icon || "🔗").trim() || "🔗";
+
+      const host = hostFromUrl(safeUrl);
+      const fav = faviconUrl(safeUrl);
+
+      // On montre le favicon si URL valide, sinon emoji
+      const iconBlock = safeUrl ? `
+        <div class="favicon" title="${host}">
+          <img src="${fav}" alt="" onerror="this.remove(); this.parentElement.innerHTML='<span class=&quot;fallback&quot;>${safeIcon}</span>';">
+        </div>
+      ` : `
+        <div class="favicon"><span class="fallback">${safeIcon}</span></div>
+      `;
+
+      const href = safeUrl || "#";
+      const disabled = !safeUrl ? 'onclick="return false;" style="opacity:.55; cursor:not-allowed;"' : "";
+
+      return `
+        <a class="tile" href="${href}" target="_blank" rel="noopener" ${disabled}>
+          <div class="row">
+            ${iconBlock}
+            <div style="min-width:0;">
+              <div class="name">${safeName}</div>
+              <div class="url">${host || "—"}</div>
+            </div>
+          </div>
+        </a>
+      `;
+    }
+
+    function renderSection(list, gridId, countId){
+      const grid = document.getElementById(gridId);
+      grid.innerHTML = list.map(tileHtml).join("");
+      document.getElementById(countId).textContent = `${list.length} / 12`;
+    }
+
+    function renderAll(){
+      // assure 12
+      while(state.shortcutsPro.length < 12) state.shortcutsPro.push({name:"", url:"", icon:"🔗"});
+      while(state.shortcutsPerso.length < 12) state.shortcutsPerso.push({name:"", url:"", icon:"🔗"});
+
+      renderSection(state.shortcutsPro.slice(0,12), "gridPro", "countPro");
+      renderSection(state.shortcutsPerso.slice(0,12), "gridPerso", "countPerso");
+    }
+
+    // ===== Editor
+    function editRowHtml(prefix, idx, item){
+      const n = item.name ?? "";
+      const u = item.url ?? "";
+      const i = item.icon ?? "🔗";
+      return `
+        <div class="edit-row">
+          <div>
+            <label>${idx+1}. Nom</label>
+            <input type="text" id="${prefix}_name_${idx}" value="${escapeHtml(n)}" placeholder="Ex: Jira" />
+          </div>
+          <div>
+            <label>URL</label>
+            <input type="url" id="${prefix}_url_${idx}" value="${escapeHtml(u)}" placeholder="https://..." />
+          </div>
+          <div>
+            <label>Emoji</label>
+            <input type="text" id="${prefix}_icon_${idx}" value="${escapeHtml(i)}" placeholder="🔗" />
+          </div>
+        </div>
+      `;
+    }
+
+    function escapeHtml(str){
+      return String(str)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+
+    function openEditor(){
+      document.getElementById("openLimitPro").value = state.openLimitPro;
+      document.getElementById("openLimitPerso").value = state.openLimitPerso;
+
+      const pro = document.getElementById("editPro");
+      const perso = document.getElementById("editPerso");
+      pro.innerHTML = state.shortcutsPro.slice(0,12).map((it, idx)=>editRowHtml("pro", idx, it)).join("");
+      perso.innerHTML = state.shortcutsPerso.slice(0,12).map((it, idx)=>editRowHtml("perso", idx, it)).join("");
+
+      document.getElementById("modalBackdrop").style.display = "flex";
+    }
+
+    function closeEditor(){
+      document.getElementById("modalBackdrop").style.display = "none";
+    }
+
+    function readEditor(){
+      const readList = (prefix) => {
+        const list = [];
+        for(let idx=0; idx<12; idx++){
+          const name = document.getElementById(`${prefix}_name_${idx}`).value.trim();
+          const url  = document.getElementById(`${prefix}_url_${idx}`).value.trim();
+          const icon = document.getElementById(`${prefix}_icon_${idx}`).value.trim() || "🔗";
+          list.push({ name, url, icon });
+        }
+        return list;
+      };
+
+      const openLimitPro = Math.min(12, Math.max(1, Number(document.getElementById("openLimitPro").value || 6)));
+      const openLimitPerso = Math.min(12, Math.max(1, Number(document.getElementById("openLimitPerso").value || 6)));
+
+      return {
+        ...state,
+        openLimitPro,
+        openLimitPerso,
+        shortcutsPro: readList("pro"),
+        shortcutsPerso: readList("perso"),
+      };
+    }
+
+    function saveFromEditor(){
+      state = readEditor();
+      saveState(state);
+      renderAll();
+      closeEditor();
+    }
+
+    // ===== Open packs
+    function openMany(list, limit){
+      const links = list
+        .map(x => (x.url || "").trim())
+        .filter(Boolean)
+        .slice(0, limit);
+
+      if(!links.length) return;
+
+      // Important: certains navigateurs bloquent si trop d'onglets d'un coup.
+      // On espace légèrement.
+      let i = 0;
+      const timer = setInterval(()=>{
+        window.open(links[i], "_blank", "noopener");
+        i++;
+        if(i >= links.length) clearInterval(timer);
+      }, 120);
+    }
+
+    // ===== Bind
+    document.getElementById("btnEdit").addEventListener("click", openEditor);
+    document.getElementById("btnClose").addEventListener("click", closeEditor);
+    document.getElementById("btnSave").addEventListener("click", saveFromEditor);
+    document.getElementById("btnReset").addEventListener("click", resetState);
+
+    document.getElementById("btnOpenPro").addEventListener("click", ()=>{
+      openMany(state.shortcutsPro, state.openLimitPro);
+    });
+    document.getElementById("btnOpenPerso").addEventListener("click", ()=>{
+      openMany(state.shortcutsPerso, state.openLimitPerso);
+    });
+
+    // click outside modal to close
+    document.getElementById("modalBackdrop").addEventListener("click", (e)=>{
+      if(e.target.id === "modalBackdrop") closeEditor();
+    });
+
+    // keyboard: Esc closes
+    window.addEventListener("keydown", (e)=>{
+      if(e.key === "Escape") closeEditor();
+    });
+
+    // ===== Init
+    renderAll();
+  </script>
+</body>
+</html>
